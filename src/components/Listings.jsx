@@ -3,16 +3,17 @@ import  { useState, useEffect } from 'react';
 import PropertyCard from './PropertyCard';
 import axios from 'axios';
 
-const Listings = ({ searchQuery }) => {
+ const Listings = ({ searchQuery, priceRange, rating, guests  }) => {
   const [propertyListings, setPropertyListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  console.log('searchQuery,priceRange, rating, guests',searchQuery,priceRange, rating, guests);
   useEffect(() => {
     // Fetch data from JSONPlaceholder
     const fetchListings = async () => {
       try {
         const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+        console.log('response = ',response);
         // Map response to resemble our property format
         const listings = response.data.slice(0, 8).map((post, index) => ({
           id: post.id,
@@ -34,10 +35,19 @@ const Listings = ({ searchQuery }) => {
     fetchListings();
   }, []);
 
-  // Filter listings based on search query
-  const filteredListings = propertyListings.filter(property =>
-    property.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+ // Apply Filters
+  //console.log('priceRange',priceRange);
+  const filteredListings = propertyListings.filter(property => {
+  const matchesQuery = property.title.toLowerCase().includes(searchQuery.toLowerCase());
+  const matchesPrice = priceRange && property.price >= priceRange[0] && property.price <= priceRange[1];
+  const matchesRating = parseFloat(property.rating) >= rating;
+   
+  console.log('matchesQuery , matchesRating', matchesQuery , matchesRating);
+  
+  return matchesQuery && matchesPrice && matchesRating;
+  
+  
+});
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
