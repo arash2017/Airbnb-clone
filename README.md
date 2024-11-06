@@ -10,3 +10,6 @@ I used Vite in this project
 #### Install Axios for API Requests
  npm install axios
 
+#### Install React Router
+ npm install react-router-dom
+
